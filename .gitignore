@@ -27,12 +27,6 @@ Thumbs.db
 *.swo
 *~
 
-# Uploads
-uploads/
-
-# Prisma
-prisma/migrations/
-
 # Testing
 coverage/
 .nyc_output/
