@@ -1,4 +1,4 @@
-# AI Viz - Data Visualization with AI
+# Data Visualizations with AI
 
 Create beautiful visualizations from your data using natural language. Upload CSV, Excel, or JSON files and chat with an AI assistant to generate charts instantly.
 
