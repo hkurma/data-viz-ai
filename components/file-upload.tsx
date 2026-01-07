@@ -7,9 +7,9 @@ import {
   FileJson,
   FileText,
   Sparkles,
+  Loader2,
+  CheckCircle2,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import * as XLSX from "xlsx";
 import Papa from "papaparse";
 import { DataRow } from "@/types/chart";
@@ -21,15 +21,16 @@ interface FileUploadProps {
 export function FileUpload({ onDataLoaded }: FileUploadProps) {
   const [isDragging, setIsDragging] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [loadingFile, setLoadingFile] = useState<string>("");
 
   const processFile = useCallback(
     async (file: File) => {
       setIsLoading(true);
+      setLoadingFile(file.name);
       try {
         const fileExtension = file.name.split(".").pop()?.toLowerCase();
 
         if (fileExtension === "csv") {
-          // Parse CSV
           const text = await file.text();
           Papa.parse(text, {
             header: true,
@@ -45,7 +46,6 @@ export function FileUpload({ onDataLoaded }: FileUploadProps) {
             },
           });
         } else if (fileExtension === "xlsx" || fileExtension === "xls") {
-          // Parse Excel
           const arrayBuffer = await file.arrayBuffer();
           const workbook = XLSX.read(arrayBuffer, { type: "array" });
           const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
@@ -56,7 +56,6 @@ export function FileUpload({ onDataLoaded }: FileUploadProps) {
             onDataLoaded(jsonData as DataRow[], columns, file.name);
           }
         } else if (fileExtension === "json") {
-          // Parse JSON
           const text = await file.text();
           const jsonData = JSON.parse(text);
           const dataArray = Array.isArray(jsonData) ? jsonData : [jsonData];
@@ -71,6 +70,7 @@ export function FileUpload({ onDataLoaded }: FileUploadProps) {
         alert("Error processing file. Please check the format and try again.");
       } finally {
         setIsLoading(false);
+        setLoadingFile("");
       }
     },
     [onDataLoaded]
@@ -112,6 +112,7 @@ export function FileUpload({ onDataLoaded }: FileUploadProps) {
   const loadSampleData = useCallback(
     async (fileName: string, fileType: "csv" | "json") => {
       setIsLoading(true);
+      setLoadingFile(fileName);
       try {
         const response = await fetch(`/${fileName}`);
         const text = await response.text();
@@ -144,90 +145,143 @@ export function FileUpload({ onDataLoaded }: FileUploadProps) {
         alert("Error loading sample data. Please try again.");
       } finally {
         setIsLoading(false);
+        setLoadingFile("");
       }
     },
     [onDataLoaded]
   );
 
   return (
-    <>
-      <Card
-        className={`border-2 border-dashed transition-colors ${
+    <div className="space-y-8">
+      {/* Upload Zone */}
+      <div
+        className={`relative rounded-2xl border-2 border-dashed transition-all duration-300 ${
           isDragging
-            ? "border-primary bg-primary/5"
-            : "border-border hover:border-primary/50"
+            ? "border-accent bg-accent/5 scale-[1.02]"
+            : "border-border hover:border-accent/50 hover:bg-surface"
         }`}
         onDrop={handleDrop}
         onDragOver={handleDragOver}
         onDragLeave={handleDragLeave}
       >
-        <div className="p-12 flex flex-col items-center justify-center text-center">
-          <div className="mb-4">
-            <Upload className="w-12 h-12 text-muted-foreground" />
+        {/* Decorative gradient */}
+        <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-indigo-500/5 via-transparent to-purple-500/5 pointer-events-none" />
+        
+        <div className="relative p-12 flex flex-col items-center justify-center text-center">
+          <div className={`mb-6 p-4 rounded-2xl transition-all duration-300 ${
+            isDragging ? "bg-accent/10 scale-110" : "bg-surface"
+          }`}>
+            {isLoading ? (
+              <Loader2 className="w-12 h-12 text-accent animate-spin" />
+            ) : (
+              <Upload className={`w-12 h-12 transition-colors ${
+                isDragging ? "text-accent" : "text-muted"
+              }`} />
+            )}
           </div>
 
-          <h3 className="text-xl font-semibold mb-2">Upload Your Data</h3>
-          <p className="text-muted-foreground mb-6 max-w-md">
-            Drag and drop or click to upload CSV, Excel (XLSX/XLS), or JSON
-            files
-          </p>
+          <h3 className="text-2xl font-bold mb-3">
+            {isLoading ? "Processing..." : "Upload Your Data"}
+          </h3>
+          
+          {isLoading ? (
+            <p className="text-muted mb-6">{loadingFile}</p>
+          ) : (
+            <p className="text-muted mb-6 max-w-md">
+              Drag and drop your file here, or click to browse
+            </p>
+          )}
 
-          <div className="flex gap-4 mb-6">
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <FileText className="w-4 h-4" />
-              <span>CSV</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <FileSpreadsheet className="w-4 h-4" />
-              <span>Excel</span>
-            </div>
-            <div className="flex items-center gap-2 text-sm text-muted-foreground">
-              <FileJson className="w-4 h-4" />
-              <span>JSON</span>
-            </div>
+          {/* File type badges */}
+          <div className="flex gap-3 mb-8">
+            {[
+              { icon: FileText, label: "CSV", color: "text-emerald-500" },
+              { icon: FileSpreadsheet, label: "Excel", color: "text-blue-500" },
+              { icon: FileJson, label: "JSON", color: "text-amber-500" },
+            ].map((type) => (
+              <div
+                key={type.label}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface border border-border"
+              >
+                <type.icon className={`w-4 h-4 ${type.color}`} />
+                <span className="text-sm font-medium">{type.label}</span>
+              </div>
+            ))}
           </div>
 
-          <label htmlFor="file-upload">
-            <Button disabled={isLoading} asChild>
-              <span>{isLoading ? "Processing..." : "Select File"}</span>
-            </Button>
+          <label htmlFor="file-upload" className="cursor-pointer">
+            <span className={`inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-200 ${
+              isLoading
+                ? "bg-muted/20 text-muted cursor-not-allowed"
+                : "bg-gradient-to-r from-indigo-500 to-purple-600 text-white hover:shadow-lg hover:shadow-indigo-500/25 hover:-translate-y-0.5"
+            }`}>
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4" />
+                  Select File
+                </>
+              )}
+            </span>
             <input
               id="file-upload"
               type="file"
               accept=".csv,.xlsx,.xls,.json"
               onChange={handleFileSelect}
+              disabled={isLoading}
               className="hidden"
             />
           </label>
         </div>
-      </Card>
+      </div>
 
-      <div className="mt-6 text-center">
-        <div className="flex items-center justify-center gap-2 mb-3">
-          <Sparkles className="w-4 h-4 text-primary" />
-          <p className="text-sm font-medium">Or try sample data:</p>
+      {/* Sample Data Section */}
+      <div className="text-center">
+        <div className="flex items-center justify-center gap-2 mb-4">
+          <Sparkles className="w-5 h-5 text-accent" />
+          <span className="font-semibold">Try with sample data</span>
         </div>
+        
         <div className="flex flex-wrap gap-3 justify-center">
-          <Button
-            variant="outline"
-            size="sm"
+          <button
             onClick={() => loadSampleData("sample-sales-data.csv", "csv")}
             disabled={isLoading}
+            className="group flex items-center gap-3 px-5 py-3 rounded-xl bg-surface border border-border hover:border-accent/50 hover:bg-surface-hover transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <FileText className="w-4 h-4 mr-2" />
-            Sales Data (CSV)
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
+            <FileText className="w-5 h-5 text-emerald-500" />
+            <div className="text-left">
+              <div className="font-medium text-sm">Sales Data</div>
+              <div className="text-xs text-muted">CSV • 10,000 records</div>
+            </div>
+            {isLoading && loadingFile === "sample-sales-data.csv" ? (
+              <Loader2 className="w-4 h-4 animate-spin text-accent ml-2" />
+            ) : (
+              <CheckCircle2 className="w-4 h-4 text-muted group-hover:text-accent ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+            )}
+          </button>
+          
+          <button
             onClick={() => loadSampleData("sample-products-data.json", "json")}
             disabled={isLoading}
+            className="group flex items-center gap-3 px-5 py-3 rounded-xl bg-surface border border-border hover:border-accent/50 hover:bg-surface-hover transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <FileJson className="w-4 h-4 mr-2" />
-            Products Data (JSON)
-          </Button>
+            <FileJson className="w-5 h-5 text-amber-500" />
+            <div className="text-left">
+              <div className="font-medium text-sm">Products Data</div>
+              <div className="text-xs text-muted">JSON • E-commerce catalog</div>
+            </div>
+            {isLoading && loadingFile === "sample-products-data.json" ? (
+              <Loader2 className="w-4 h-4 animate-spin text-accent ml-2" />
+            ) : (
+              <CheckCircle2 className="w-4 h-4 text-muted group-hover:text-accent ml-2 opacity-0 group-hover:opacity-100 transition-opacity" />
+            )}
+          </button>
         </div>
       </div>
-    </>
+    </div>
   );
 }

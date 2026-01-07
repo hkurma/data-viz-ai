@@ -1,143 +1,153 @@
-# Data Visualizations with AI
+# Data Viz AI
 
-Create beautiful visualizations from your data using natural language. Upload CSV, Excel, or JSON files and chat with an AI assistant to generate charts instantly.
+Transform your data into beautiful charts using AI. Upload CSV, Excel, or JSON files and describe the visualization you want in plain English.
 
-## Features
+![Data Viz AI](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)
+![React](https://img.shields.io/badge/React-19-blue?style=flat-square&logo=react)
+![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-38bdf8?style=flat-square&logo=tailwindcss)
+![TypeScript](https://img.shields.io/badge/TypeScript-5-3178c6?style=flat-square&logo=typescript)
 
-- 📊 **Multiple File Formats**: Support for CSV, Excel (XLSX/XLS), and JSON files
-- 💬 **Natural Language Interface**: Chat with AI to create visualizations
-- 📈 **Multiple Chart Types**: Bar charts, line charts, pie charts, and doughnut charts
-- 🎨 **Beautiful UI**: Modern, responsive interface with dark mode support
-- 💾 **Client-Side Processing**: All data processing happens in your browser - no data is stored
-- 📥 **Export Charts**: Download your visualizations as PNG images
+## ✨ Features
 
-## Security & Privacy
+- **📊 Multi-Format Support** — CSV, Excel (XLSX/XLS), and JSON files
+- **💬 AI-Powered** — Describe charts in natural language
+- **📈 Chart Types** — Bar, line, pie, and doughnut charts
+- **🎨 Modern UI** — Custom-built components with glass morphism effects
+- **🌓 Dark/Light Mode** — Beautiful themes with smooth transitions
+- **🔒 Privacy First** — All processing happens in your browser
+- **📥 Export** — Download charts as high-quality PNG images
 
-- All file processing happens client-side in your browser
-- Only column names and a preview of your data (first 10 rows) are sent to OpenAI
-- No data is stored in any database
-- Data is cleared when you upload a new file or refresh the page
+## 🛡️ Privacy & Security
 
-## Tech Stack
+Your data stays private:
 
-- **Framework**: Next.js 15 with React 19
-- **Styling**: Tailwind CSS
-- **Charts**: Chart.js with react-chartjs-2
-- **File Parsing**: xlsx (Excel), papaparse (CSV)
-- **AI**: Vercel AI SDK with OpenAI
+- ✅ File parsing happens entirely client-side
+- ✅ Only column names + 10 row preview sent to AI
+- ✅ No database, no storage
+- ✅ Data cleared on page refresh
 
-## Getting Started
+## 🛠️ Tech Stack
+
+| Category | Technology |
+|----------|------------|
+| Framework | Next.js 15 (App Router) |
+| UI | React 19, Tailwind CSS 4 |
+| Charts | Chart.js + react-chartjs-2 |
+| Data Parsing | xlsx, papaparse |
+| AI | Vercel AI SDK + OpenAI |
+| Fonts | Outfit, JetBrains Mono |
+
+## 🚀 Getting Started
 
 ### Prerequisites
 
-- Node.js 18+ installed
+- Node.js 18+
 - OpenAI API key ([Get one here](https://platform.openai.com/api-keys))
 
 ### Installation
 
-1. Clone the repository:
-
 ```bash
+# Clone the repository
 git clone <your-repo-url>
-cd ai-viz
-```
+cd data-viz-ai
 
-2. Install dependencies:
-
-```bash
+# Install dependencies
 npm install
-```
 
-3. Set up environment variables:
-
-```bash
+# Set up environment
 cp .env.example .env
-```
+# Add your OPENAI_API_KEY to .env
 
-4. Add your OpenAI API key to `.env`:
-
-```bash
-OPENAI_API_KEY=your_actual_api_key_here
-```
-
-5. Run the development server:
-
-```bash
+# Start development server
 npm run dev
 ```
 
-6. Open [http://localhost:3000](http://localhost:3000) in your browser
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-## Usage
+## 📖 Usage
 
-1. **Upload Data**: Click or drag-and-drop to upload your CSV, Excel, or JSON file
-   - Or try the sample data buttons to load pre-loaded datasets
-2. **Chat**: Ask the AI assistant to create visualizations, for example:
-   - "Show me a bar chart of sales by region"
-   - "Create a line chart of revenue over time"
-   - "Make a pie chart showing product distribution"
-3. **View & Download**: See your chart rendered instantly and download it as needed
+### 1. Upload Your Data
 
-## Sample Data
+Drop a file or click to browse. Supports:
+- CSV files
+- Excel spreadsheets (.xlsx, .xls)
+- JSON arrays
 
-The application includes large sample datasets (10,000 records each) you can try immediately:
+Or try the **sample datasets** with 10,000 records each.
 
-- **Sales Data (CSV)**: 10,000 sales records across regions, products, months, and years
-  - Columns: Region, Product, Sales, Units, Month, Year
-  - Try: "Show me a bar chart of total sales by region"
-  - Try: "Create a line chart of average sales by month"
-  - Try: "Show me a pie chart of product distribution"
-  
-- **Products Data (JSON)**: 10,000 product records with categories, pricing, and inventory
-  - Fields: product, category, price, quantity, revenue
-  - Try: "Create a pie chart of revenue by category"
-  - Try: "Show total quantity by category in a bar chart"
-  - Try: "Display average price by category"
+### 2. Chat with AI
 
-Click the sample data buttons on the upload screen to load these datasets instantly. The large datasets allow you to test performance and create meaningful visualizations.
+Ask for visualizations in plain English:
 
-## Example Prompts
-
-- "Show a bar chart of [column] by [category]"
-- "Create a line chart showing [metric] over time"
-- "Make a pie chart of [field] distribution"
-- "Display a doughnut chart of [data] breakdown"
-- "Compare [field1] and [field2] in a bar chart"
-
-## Project Structure
-
-```bash
-ai-viz/
-├── app/
-│   ├── api/
-│   │   └── chat/
-│   │       └── route.ts       # AI chat endpoint
-│   ├── viz/
-│   │   └── page.tsx           # Data Visualization page 
-│   ├── layout.tsx             # Root layout
-│   ├── page.tsx               # Home page
-│   └── globals.css            # Global styles
-├── components/
-│   ├── file-upload.tsx        # File upload component
-│   ├── chat-interface.tsx     # Chat UI
-│   ├── chart-renderer.tsx     # Chart.js wrapper
-│   ├── theme-toggle.tsx       # Light/Dark mode toggle component
-│   ├── data-table.tsx         # Data table
-│   ├── error-handler.tsx      # Global error handler
-│   └── ui/                    # UI components
-├── lib/
-│   └── utils.ts               # Utils
-├── types/
-│   └── chart.ts               # TypeScript types
-└── public/                    # Static assets
-    ├── sample-sales-data.csv  # Sample CSV data
-    └── sample-products-data.json   # Sample JSON data
+```
+"Show me a bar chart of sales by region"
+"Create a line chart of revenue over time"
+"Make a pie chart of product distribution"
+"Compare units sold across categories"
 ```
 
-## License
+### 3. Export & Share
+
+Click the **Export** button to download your chart as a PNG image.
+
+## 📊 Sample Data
+
+Two large datasets included for testing:
+
+| Dataset | Format | Records | Columns |
+|---------|--------|---------|---------|
+| Sales Data | CSV | 10,000 | Region, Product, Sales, Units, Month, Year |
+| Products Data | JSON | 10,000 | product, category, price, quantity, revenue |
+
+### Example Prompts for Sales Data
+- "Bar chart of total sales by region"
+- "Line chart of average sales by month"
+- "Pie chart showing product distribution"
+
+### Example Prompts for Products Data
+- "Pie chart of revenue by category"
+- "Bar chart of total quantity by category"
+- "Doughnut chart of average price by category"
+
+## 📁 Project Structure
+
+```
+data-viz-ai/
+├── app/
+│   ├── api/chat/route.ts    # AI chat endpoint
+│   ├── viz/page.tsx         # Visualization page
+│   ├── layout.tsx           # Root layout
+│   ├── page.tsx             # Landing page
+│   └── globals.css          # Design system & styles
+├── components/
+│   ├── file-upload.tsx      # Drag & drop uploader
+│   ├── chat-interface.tsx   # AI chat UI
+│   ├── chart-renderer.tsx   # Chart.js wrapper
+│   ├── data-table.tsx       # Sortable data table
+│   ├── theme-toggle.tsx     # Dark/light toggle
+│   └── error-handler.tsx    # Global error handler
+├── types/
+│   └── chart.ts             # TypeScript definitions
+└── public/
+    ├── icon.svg             # App icon
+    ├── sample-sales-data.csv
+    └── sample-products-data.json
+```
+
+## 🎨 Design System
+
+Custom-built UI with:
+
+- **Colors**: Indigo-purple gradient accents
+- **Effects**: Glass morphism, subtle grid backgrounds
+- **Typography**: Outfit (headings), JetBrains Mono (data)
+- **Animations**: Fade-in, float, pulse glow effects
+- **Components**: All hand-crafted with Tailwind CSS
+
+## 📄 License
 
 MIT
 
-## Contributing
+## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions welcome! Please submit a Pull Request.
